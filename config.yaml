@@ -1,0 +1,34 @@
+# All experiment parameters live here. Edit this file, not the code.
+experiment:
+  name: sample_smoke_run
+  seed: 42
+
+data:
+  path: data/sample/flows_sample.csv        # Week 7: switch to full BoT-IoT subset (not committed)
+  feature_cols: [duration, pkts, bytes, mean_iat]
+  label_col: label
+  attack_col: attack_type
+  benign_train_frac: 0.6                    # chronological split of benign flows
+
+graph:
+  hops: 2                                   # message-passing depth (independent variable)
+  window_size: 1000                         # flows per graph window (bounds O(n^2) adjacency)
+
+models:                                     # independent variable: model architecture
+  - {name: flat_lr,      enabled: true}     # non-graph baseline (H2)
+  - {name: gnn_fp32,     enabled: true}     # classical GNN-style baseline (H1/H2)
+  - {name: gnn_int8,     enabled: true}     # quantized GNN (H1)
+  - {name: qgnn,         enabled: true}     # quantum-enhanced GNN: stub until Week 7
+
+benchmark:
+  warmup_runs: 3
+  repeats: 30
+  timeout_sec: 600
+
+guardrails:
+  min_precision: 0.92                       # from H1
+  max_f1_drop_vs_fp32: 0.02
+
+output:
+  results_csv: results/results.csv
+  log_file: results/run.log

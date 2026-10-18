@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Methodology Passport Card - Kutmyrza Aziza, Kuat Aruzhan</title>
+<style>
+  @page {
+    size: A4;
+    margin: 15mm 15mm 15mm 15mm;
+  }
+  body {
+    font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+    line-height: 1.45;
+    color: #000000;
+    font-size: 10.5pt;
+    margin: 0;
+    padding: 20px;
+    background: #ffffff;
+  }
+  .page-header {
+    text-align: center;
+    font-size: 9pt;
+    color: #333333;
+    border-bottom: 1px solid #cccccc;
+    padding-bottom: 4px;
+    margin-bottom: 18px;
+  }
+  h1 {
+    font-size: 17pt;
+    color: #000000;
+    font-weight: bold;
+    margin: 0 0 6px 0;
+    line-height: 1.2;
+  }
+  .subtitle {
+    font-size: 10.5pt;
+    color: #333333;
+    margin-bottom: 18px;
+  }
+  h2 {
+    font-size: 12.5pt;
+    color: #000000;
+    font-weight: bold;
+    border-bottom: 1px solid #d1d5db;
+    padding-bottom: 3px;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    page-break-after: avoid;
+  }
+  h3 {
+    font-size: 11pt;
+    color: #000000;
+    font-weight: bold;
+    margin-top: 14px;
+    margin-bottom: 6px;
+    page-break-after: avoid;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10px 0 14px 0;
+    font-size: 9.5pt;
+    page-break-inside: avoid;
+  }
+  th, td {
+    border: 1px solid #d1d5db;
+    padding: 6px 9px;
+    text-align: left;
+    vertical-align: top;
+    color: #000000;
+  }
+  th {
+    background-color: #f9fafb;
+    font-weight: bold;
+  }
+  p {
+    margin: 6px 0 10px 0;
+  }
+  ul, ol {
+    margin: 6px 0 12px 20px;
+    padding: 0;
+  }
+  li {
+    margin-bottom: 4px;
+  }
+  code {
+    font-family: Consolas, Monaco, "Courier New", monospace;
+    font-size: 9pt;
+    background-color: #f3f4f6;
+    padding: 1px 4px;
+    border-radius: 2px;
+    color: #000000;
+  }
+  pre {
+    background-color: #ffffff;
+    color: #000000;
+    border: 1px solid #d1d5db;
+    padding: 12px;
+    font-family: Consolas, Monaco, "Courier New", monospace;
+    font-size: 9pt;
+    line-height: 1.4;
+    white-space: pre;
+    overflow-x: auto;
+    page-break-inside: avoid;
+    margin-top: 10px;
+  }
+  pre code {
+    background: transparent;
+    padding: 0;
+  }
+  hr {
+    border: 0;
+    border-top: 1px solid #d1d5db;
+    margin: 8px 0 14px 0;
+  }
+  .no-print {
+    margin-bottom: 16px;
+    padding: 8px 12px;
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .btn-print {
+    background: #000000;
+    color: #ffffff;
+    border: none;
+    font-size: 9.5pt;
+    font-weight: bold;
+    padding: 6px 14px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  @media print {
+    body { padding: 0; }
+    .no-print { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="no-print">
+  <span><strong>Save as PDF:</strong> Press <strong>Ctrl + P</strong> (or click the button) and select <strong>"Save as PDF"</strong>.</span>
+  <button class="btn-print" onclick="window.print()">Save as PDF</button>
+</div>
+
+<div class="page-header">Methodology Passport Card - Kutmyrza Aziza, Kuat Aruzhan</div>
+
+<h1>Methodology Passport Card (Task 2)</h1>
+<div class="subtitle">Research Methodology &amp; Experimental Benchmark Passport &bull; Milestone W5-W6</div>
+
+<h2>1. Project Information</h2>
+<table>
+  <tr>
+    <th style="width: 32%;">Field</th>
+    <th>Specification</th>
+  </tr>
+  <tr>
+    <td><strong>Research Title</strong></td>
+    <td><strong>Zero-Day Attack Detection in IoT Networks via Graph Neural Networks: From Classical Architectures to Quantum and Quantized Models</strong></td>
+  </tr>
+  <tr>
+    <td><strong>Authors (Student Pair)</strong></td>
+    <td><strong>Kutmyrza Aziza, Kuat Aruzhan</strong></td>
+  </tr>
+  <tr>
+    <td><strong>GitHub Repository</strong></td>
+    <td>https://github.com/aruzhankuat/iot-gnn-zeroday-benchmark</td>
+  </tr>
+  <tr>
+    <td><strong>Artifact Status</strong></td>
+    <td>Executable &amp; Verified (W5-W6 Skeleton) | Dockerfile, config.yaml, src/, data/sample/</td>
+  </tr>
+</table>
+
+<h2>2. Research Type</h2>
+<p><strong>Quantitative (Experimental, Comparative).</strong></p>
+<p>All scientific conclusions are founded upon objective, measurable numerical metrics (detection accuracy, inference latency in milliseconds, memory consumption in megabytes) obtained in a strictly controlled computational experiment with varied independent factors (model architecture / data representation). Hypotheses are tested using non-parametric inferential statistics (paired Wilcoxon signed-rank test, significance level &alpha; = 0.05). The qualitative component (literature review in Task 1, Zotero Base, ResearchRabbit LitMap) is used exclusively to substantiate hypothesis thresholds and to select fair baseline models.</p>
+
+<h2>3. Formulation of Hypotheses (Refined for Week 5)</h2>
+<p><strong>Zero-Day Evaluation Protocol:</strong> <code>leave-one-attack-out</code>. Each attack family is sequentially withheld from the training phase and appears solely during evaluation as an unstudied (unseen) zero-day threat.</p>
+
+<h3>Hypothesis 1 (RQ1: Quantization &amp; Edge Efficiency)</h3>
+<ul>
+  <li><strong>H<sub>0</sub> (Null Hypothesis):</strong> INT8-quantized GNN does not reduce median inference latency by &ge; 30% relative to FP32 GNN, or achieves it but precision on unseen attacks drops below 0.92 / Macro-F1 drops by more than 0.02 (absolute).</li>
+  <li><strong>H<sub>1</sub> (Alternative Hypothesis):</strong> INT8-quantized GNN reduces median inference latency by &ge; 30% and peak memory / model size by &ge; 40% relative to FP32 GNN, while maintaining precision on unseen attacks &ge; 0.92 and Macro-F1 degradation &le; 0.02 (absolute) (Wilcoxon signed-rank test, p &lt; 0.05).</li>
+</ul>
+<p><strong>Threshold Justification (H1):</strong> In Task 1's literature synthesis, benchmarked studies demonstrated a &minus;38% latency reduction (quantized GNN, IEEE 11424563) and a &minus;45% memory saving (lightweight Edge-GNN, IEEE 11219271). A 30% threshold provides a conservative, reproducible margin. Phrasing "up to 40%" from Task 1 is replaced with a strict one-sided lower bound.</p>
+<p><strong>Quantum Model Status (qgnn):</strong> The quantum model executes on a classical statevector simulator; its simulated latency and memory are not directly comparable to physical edge micro-nodes. It is incorporated as an exploratory comparative baseline (descriptive statistics) rather than as a confirmatory component of H1.</p>
+
+<h3>Hypothesis 2 (RQ2: Topological Generalization Advantage)</h3>
+<ul>
+  <li><strong>H<sub>0</sub> (Null Hypothesis):</strong> GNN models operating on flow interaction graphs do not provide a statistically significant Macro-F1 gain on unseen attacks &ge; 0.15 over flat feature baselines, or the observed gain is statistically insignificant (p &ge; 0.05).</li>
+  <li><strong>H<sub>1</sub> (Alternative Hypothesis):</strong> GNN models operating on flow interaction graphs improve Macro-F1 score on unseen attacks by <strong>at least 0.15</strong> (absolute) over flat feature baselines with statistical significance (Wilcoxon signed-rank test, p &lt; 0.05), while maintaining a False Positive Rate no higher than baseline (FPR<sub>GNN</sub> &le; FPR<sub>flat</sub>).</li>
+</ul>
+
+<h2>4. Variable Matrix</h2>
+<table>
+  <thead>
+    <tr>
+      <th style="width: 22%;">Category</th>
+      <th style="width: 28%;">Variable</th>
+      <th>Specification / Range / Units</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td rowspan="4"><strong>Independent<br>Variables</strong></td>
+      <td>Model Architecture (H1)</td>
+      <td>gnn_fp32 (FP32 baseline), gnn_int8 (INT8 quantized), qgnn (exploratory simulator stub)</td>
+    </tr>
+    <tr>
+      <td>Data Representation (H2)</td>
+      <td>Flow interaction graph topology vs. Flat netflow feature vectors</td>
+    </tr>
+    <tr>
+      <td>Held-out Attack Family</td>
+      <td>Sequentially each attack family in the dataset (leave-one-attack-out)</td>
+    </tr>
+    <tr>
+      <td>Message Passing Depth</td>
+      <td>k = 2 hops (fixed in config.yaml, ablation scheduled for Week 7+)</td>
+    </tr>
+    <tr>
+      <td rowspan="4"><strong>Dependent<br>Variables</strong></td>
+      <td>Median Inference Latency</td>
+      <td>Measured execution time (ms per batch and ms per individual flow)</td>
+    </tr>
+    <tr>
+      <td>Peak Memory / Model Footprint</td>
+      <td>Peak RAM allocation (RSS, MB) and serialized disk footprint (MB)</td>
+    </tr>
+    <tr>
+      <td>Zero-Day Detection Rate</td>
+      <td>Recall on held-out unseen attack family (scale 0.0 - 1.0)</td>
+    </tr>
+    <tr>
+      <td>Classification Performance</td>
+      <td>Precision, Macro-F1, Accuracy, False Positive Rate (FPR) (scale 0.0 - 1.0)</td>
+    </tr>
+    <tr>
+      <td rowspan="5"><strong>Controlled<br>Variables</strong></td>
+      <td>Hardware Constraints</td>
+      <td>Docker container limits: --cpus=1 --memory=512m (edge node emulation)</td>
+    </tr>
+    <tr>
+      <td>Software Environment</td>
+      <td>python:3.11.9-slim-bookworm; numpy==1.26.4, pandas==2.2.2, scikit-learn==1.5.1, PyYAML==6.0.1</td>
+    </tr>
+    <tr>
+      <td>Dataset &amp; Partitioning</td>
+      <td>Standardized BoT-IoT sample; benign: 60% chronological train / 40% test; scaler fit strictly on train</td>
+    </tr>
+    <tr>
+      <td>Graph Window Size</td>
+      <td>window_size = 1000 flows per window (bounds adjacency matrix complexity O(n<sup>2</sup>))</td>
+    </tr>
+    <tr>
+      <td>Measurement Conditions</td>
+      <td>Fixed seed = 42, 3 warmup runs, 30 repeated timing iterations</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>5. Selected Metrics and Baselines</h2>
+<table>
+  <thead>
+    <tr>
+      <th style="width: 25%;">Category</th>
+      <th style="width: 35%;">Metric / Model</th>
+      <th>Purpose &amp; Operational Target</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Primary Metrics</strong></td>
+      <td>&bull; H1: Median inference latency (ms)<br>&bull; H2: Macro-F1 on unseen attacks</td>
+      <td>Primary indicators used to statistically confirm or refute hypotheses H1 and H2.</td>
+    </tr>
+    <tr>
+      <td><strong>Guardrail Metrics</strong></td>
+      <td>&bull; Unseen Precision &ge; 0.92<br>&bull; F1 degradation (INT8 vs FP32) &le; 0.02<br>&bull; FPR<sub>GNN</sub> &le; FPR<sub>flat</sub><br>&bull; Status == ok</td>
+      <td>Safety and reliability thresholds ensuring optimization does not degrade detection capability or cause execution failures.</td>
+    </tr>
+    <tr>
+      <td><strong>Secondary Metrics</strong></td>
+      <td>&bull; Peak RAM (MB)<br>&bull; Model disk size (MB)<br>&bull; Accuracy, Recall</td>
+      <td>Supplementary profiling of resource efficiency and overall classification robustness.</td>
+    </tr>
+    <tr>
+      <td><strong>Baselines</strong></td>
+      <td>&bull; For H1: FP32 Classical GNN<br>&bull; For H2: Flat Logistic Regression</td>
+      <td>For H1: fair comparison isolating precision effects.<br>For H2: evaluating topological advantage (RF and MLP added in Week 7).</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>6. Assumptions and Limitations</h2>
+<ol>
+  <li><strong>Graph Construction Topology:</strong> Graphs are constructed under the scheme "flows = nodes, edges connect consecutive flows originating from the same host IP". Topological sensitivity was noted in Task 1 as an inherent research consideration.</li>
+  <li><strong>Iterative Progression:</strong> Weeks 5-6 harness implements parameter-free normalized neighbor propagation with linear classification heads. Full-scale PyTorch Geometric architectures and QAT are integrated in Week 7.</li>
+  <li><strong>Verification Sample Data:</strong> The <code>data/sample/flows_sample.csv</code> file (10 rows) serves strictly as an operational smoke test.</li>
+  <li><strong>Task 1 Alignment:</strong> References to "energy efficiency" in the Task 1 Bridge Statement have been <strong>strictly removed</strong> to ensure complete alignment with experimental variables.</li>
+</ol>
+
+<h2>7. Experiment Configuration (config.yaml)</h2>
+<hr>
+<pre><code>experiment:
+  name: sample_smoke_run
+  seed: 42
+
+data:
+  path: data/sample/flows_sample.csv
+  feature_cols: [duration, pkts, bytes, mean_iat]
+  label_col: label
+  attack_col: attack_type
+  benign_train_frac: 0.6
+
+graph:
+  hops: 2
+  window_size: 1000
+
+models:
+  - {name: flat_lr,      enabled: true}
+  - {name: gnn_fp32,     enabled: true}
+  - {name: gnn_int8,     enabled: true}
+  - {name: qgnn,         enabled: true}
+
+benchmark:
+  warmup_runs: 3
+  repeats: 30
+  timeout_sec: 600
+
+guardrails:
+  min_precision: 0.92
+  max_f1_drop_vs_fp32: 0.02
+
+output:
+  results_csv: results/results.csv
+  log_file: results/run.log</code></pre>
+
+</body>
+</html>

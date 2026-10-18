@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Карточка методологии исследования - Kutmyrza Aziza, Kuat Aruzhan</title>
+<style>
+  @page {
+    size: A4;
+    margin: 15mm 15mm 15mm 15mm;
+  }
+  body {
+    font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+    line-height: 1.45;
+    color: #000000;
+    font-size: 10.5pt;
+    margin: 0;
+    padding: 20px;
+    background: #ffffff;
+  }
+  .page-header {
+    text-align: center;
+    font-size: 9pt;
+    color: #333333;
+    border-bottom: 1px solid #cccccc;
+    padding-bottom: 4px;
+    margin-bottom: 18px;
+  }
+  h1 {
+    font-size: 17pt;
+    color: #000000;
+    font-weight: bold;
+    margin: 0 0 6px 0;
+    line-height: 1.2;
+  }
+  .subtitle {
+    font-size: 10.5pt;
+    color: #333333;
+    margin-bottom: 18px;
+  }
+  h2 {
+    font-size: 12.5pt;
+    color: #000000;
+    font-weight: bold;
+    border-bottom: 1px solid #d1d5db;
+    padding-bottom: 3px;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    page-break-after: avoid;
+  }
+  h3 {
+    font-size: 11pt;
+    color: #000000;
+    font-weight: bold;
+    margin-top: 14px;
+    margin-bottom: 6px;
+    page-break-after: avoid;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10px 0 14px 0;
+    font-size: 9.5pt;
+    page-break-inside: avoid;
+  }
+  th, td {
+    border: 1px solid #d1d5db;
+    padding: 6px 9px;
+    text-align: left;
+    vertical-align: top;
+    color: #000000;
+  }
+  th {
+    background-color: #f9fafb;
+    font-weight: bold;
+  }
+  p {
+    margin: 6px 0 10px 0;
+  }
+  ul, ol {
+    margin: 6px 0 12px 20px;
+    padding: 0;
+  }
+  li {
+    margin-bottom: 4px;
+  }
+  code {
+    font-family: Consolas, Monaco, "Courier New", monospace;
+    font-size: 9pt;
+    background-color: #f3f4f6;
+    padding: 1px 4px;
+    border-radius: 2px;
+    color: #000000;
+  }
+  pre {
+    background-color: #ffffff;
+    color: #000000;
+    border: 1px solid #d1d5db;
+    padding: 12px;
+    font-family: Consolas, Monaco, "Courier New", monospace;
+    font-size: 9pt;
+    line-height: 1.4;
+    white-space: pre;
+    overflow-x: auto;
+    page-break-inside: avoid;
+    margin-top: 10px;
+  }
+  pre code {
+    background: transparent;
+    padding: 0;
+  }
+  hr {
+    border: 0;
+    border-top: 1px solid #d1d5db;
+    margin: 8px 0 14px 0;
+  }
+  .no-print {
+    margin-bottom: 16px;
+    padding: 8px 12px;
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .btn-print {
+    background: #000000;
+    color: #ffffff;
+    border: none;
+    font-size: 9.5pt;
+    font-weight: bold;
+    padding: 6px 14px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  @media print {
+    body { padding: 0; }
+    .no-print { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="no-print">
+  <span><strong>Печать / Сохранение:</strong> Нажмите <strong>Ctrl + P</strong> (или кнопку) и выберите <strong>«Сохранить как PDF»</strong>.</span>
+  <button class="btn-print" onclick="window.print()">Сохранить в PDF</button>
+</div>
+
+<div class="page-header">Карточка методологии исследования - Kutmyrza Aziza, Kuat Aruzhan</div>
+
+<h1>Карточка методологии исследования (Task 2)</h1>
+<div class="subtitle">Отчетная документация по этапу W5–W6 &bull; Исследовательская карточка методологии</div>
+
+<h2>1. Информация о проекте</h2>
+<table>
+  <tr>
+    <th style="width: 32%;">Поле</th>
+    <th>Значение</th>
+  </tr>
+  <tr>
+    <td><strong>Название работы</strong></td>
+    <td><strong>Zero-Day Attack Detection in IoT Networks via Graph Neural Networks: From Classical Architectures to Quantum and Quantized Models</strong></td>
+  </tr>
+  <tr>
+    <td><strong>Состав пары (авторы)</strong></td>
+    <td><strong>Kutmyrza Aziza, Kuat Aruzhan</strong></td>
+  </tr>
+  <tr>
+    <td><strong>GitHub-репозиторий</strong></td>
+    <td>https://github.com/&lt;username&gt;/iot-gnn-zeroday-benchmark</td>
+  </tr>
+  <tr>
+    <td><strong>Статус артефактов</strong></td>
+    <td>Executable &amp; Verified (W5-W6 Skeleton) | Dockerfile, config.yaml, src/, data/sample/</td>
+  </tr>
+</table>
+
+<h2>2. Тип исследования</h2>
+<p><strong>Количественное (экспериментальное, сравнительное).</strong></p>
+<p>Все научные выводы работы строятся на объективных числовых метриках (точность детекции, задержка инференса в миллисекундах, объем памяти в мегабайтах), измеренных в ходе контролируемого вычислительного эксперимента с варьируемым независимым фактором (архитектура модели / представление данных). Результаты проверяются методами непараметрической математической статистики (парный критерий Вилкоксона, уровень значимости &alpha; = 0.05). Качественный компонент (анализ литературы Task 1, Zotero Base, ResearchRabbit LitMap) используется исключительно для теоретического обоснования порогов гипотез и выбора честных baseline-моделей.</p>
+
+<h2>3. Формулировка гипотез (Уточнено на Неделе 5)</h2>
+<p><strong>Протокол zero-day валидации:</strong> <code>leave-one-attack-out</code>. Каждое семейство атак по очереди исключается из обучающей выборки и появляется исключительно на этапе тестирования как неизвестная ранее (unseen) zero-day угроза.</p>
+
+<h3>Гипотеза 1 (RQ1: Эффективность квантования на edge-узлах)</h3>
+<ul>
+  <li><strong>H<sub>0</sub> (Нулевая):</strong> INT8-квантованная GNN не снижает медианную задержку инференса на &ge; 30% относительно FP32 GNN, либо снижает её, но precision на unseen-атаках падает ниже 0.92 / F1-score падает более чем на 0.02 (абсолютных).</li>
+  <li><strong>H<sub>1</sub> (Альтернативная):</strong> INT8-квантованная GNN снижает медианную задержку инференса на &ge; 30% и пиковую память / размер модели на &ge; 40% относительно FP32 GNN, при этом precision на unseen-атаках составляет &ge; 0.92, а падение F1 &le; 0.02 (абсолютных) (Wilcoxon signed-rank, p &lt; 0.05).</li>
+</ul>
+<p><strong>Обоснование порогов (H1):</strong> В анализе литературы Task 1 лучшие зафиксированные результаты составили &minus;38% задержки (квантованная GNN, IEEE 11424563) и &minus;45% памяти (lightweight Edge-GNN, IEEE 11219271). Порог в 30% задает воспроизводимый запас на накладные расходы рантайма. Формулировка «up to 40%» из предварительного драфта Task 1 заменена на строгий односторонний нижний порог.</p>
+<p><strong>Статус квантовой модели (qgnn):</strong> Модель исполняется на квантовом симуляторе (statevector), поэтому её задержка и память не сопоставимы с физическим edge-железом. Она включена как эксплоративный сравнительный пункт (описательная статистика), а не для подтверждения H1.</p>
+
+<h3>Гипотеза 2 (RQ2: Преимущество графового представления в генерализации)</h3>
+<ul>
+  <li><strong>H<sub>0</sub> (Нулевая):</strong> GNN на графе потоков не дает статистически значимого прироста F1 на unseen-атаках &ge; 0.15 над моделью на плоских признаках (flat baseline), либо прирост незначим (p &ge; 0.05).</li>
+  <li><strong>H<sub>1</sub> (Альтернативная):</strong> GNN на графе потоков повышает F1 на unseen-атаках <strong>не менее чем на 0.15</strong> (абсолютных) относительно flat baseline со статистической значимостью (Wilcoxon signed-rank test, p &lt; 0.05), при этом уровень ложных тревог не превышает показатель baseline (FPR<sub>GNN</sub> &le; FPR<sub>flat</sub>).</li>
+</ul>
+
+<h2>4. Матрица переменных</h2>
+<table>
+  <thead>
+    <tr>
+      <th style="width: 22%;">Тип</th>
+      <th style="width: 28%;">Переменная</th>
+      <th>Значения / Единицы измерения / Ограничения</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td rowspan="4"><strong>Независимые<br>переменные</strong></td>
+      <td>Архитектура модели (H1)</td>
+      <td>gnn_fp32 (FP32 baseline), gnn_int8 (INT8 quantized), qgnn (эксплоративно)</td>
+    </tr>
+    <tr>
+      <td>Представление данных (H2)</td>
+      <td>Граф сетевых потоков (flow graph topology) vs. Плоский вектор признаков (flat netflow)</td>
+    </tr>
+    <tr>
+      <td>Held-out семейство атак</td>
+      <td>Поочередно каждое семейство атак датасета (leave-one-attack-out)</td>
+    </tr>
+    <tr>
+      <td>Глубина message passing</td>
+      <td>k = 2 хопа (фиксировано в config.yaml, абляция на Неделе 7+)</td>
+    </tr>
+    <tr>
+      <td rowspan="4"><strong>Зависимые<br>переменные</strong></td>
+      <td>Median inference latency</td>
+      <td>Медианная задержка инференса (мс на батч и мс на поток)</td>
+    </tr>
+    <tr>
+      <td>Peak memory / размер модели</td>
+      <td>Пиковое потребление RAM и размер весов модели на диске (МБ)</td>
+    </tr>
+    <tr>
+      <td>Zero-day detection rate</td>
+      <td>Recall на unseen-атаках (шкала 0.0 &ndash; 1.0)</td>
+    </tr>
+    <tr>
+      <td>Качество классификации</td>
+      <td>Precision, Macro-F1, Accuracy, False Positive Rate (FPR) (шкала 0.0 &ndash; 1.0)</td>
+    </tr>
+    <tr>
+      <td rowspan="5"><strong>Контролируемые<br>переменные</strong></td>
+      <td>Аппаратные ограничения</td>
+      <td>Docker-контейнер: --cpus=1 --memory=512m (эмуляция edge-узла)</td>
+    </tr>
+    <tr>
+      <td>Программный стек</td>
+      <td>python:3.11.9-slim-bookworm; numpy==1.26.4, pandas==2.2.2, scikit-learn==1.5.1, PyYAML==6.0.1</td>
+    </tr>
+    <tr>
+      <td>Датасет и разбиение</td>
+      <td>Стандартизированная подвыборка BoT-IoT; benign: 60% train / 40% test; scaler обучается только на train</td>
+    </tr>
+    <tr>
+      <td>Размер окна графа</td>
+      <td>window_size = 1000 потоков на граф (ограничивает сложность матрицы смежности O(n<sup>2</sup>))</td>
+    </tr>
+    <tr>
+      <td>Условия замера</td>
+      <td>Фиксированный seed = 42, 3 прогревочные итерации (warmup), 30 повторов замера задержки</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>5. Выбранные метрики и Baseline</h2>
+<table>
+  <thead>
+    <tr>
+      <th style="width: 25%;">Категория</th>
+      <th style="width: 35%;">Метрика / Модель</th>
+      <th>Назначение и целевые критерии</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Первичные метрики</strong></td>
+      <td>&bull; H1: Median inference latency (мс)<br>&bull; H2: Macro-F1 на unseen-атаках</td>
+      <td>Главные целевые критерии подтверждения/опровержения альтернативных гипотез H1 и H2.</td>
+    </tr>
+    <tr>
+      <td><strong>Пороговые метрики</strong></td>
+      <td>&bull; Unseen Precision &ge; 0.92<br>&bull; Падение F1 (INT8 vs FP32) &le; 0.02<br>&bull; FPR<sub>GNN</sub> &le; FPR<sub>flat</sub><br>&bull; Status == ok</td>
+      <td>Ограничительные барьеры безопасности: исключают недопустимую деградацию точности при оптимизации задержки и гарантируют надежность рантайма.</td>
+    </tr>
+    <tr>
+      <td><strong>Вторичные метрики</strong></td>
+      <td>&bull; Peak RAM (МБ)<br>&bull; Размер весов (МБ)<br>&bull; Accuracy, Recall</td>
+      <td>Вспомогательная оценка ресурсоемкости и общей классификационной способности.</td>
+    </tr>
+    <tr>
+      <td><strong>Контрольная группа</strong></td>
+      <td>&bull; Для H1: FP32 Classical GNN<br>&bull; Для H2: Flat Logistic Regression</td>
+      <td>Для H1: честное сравнение (меняется только разрядность вычислений).<br>Для H2: оценка роли топологии (на W7 добавляются Random Forest и MLP).</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>6. Ограничения и допущения</h2>
+<ol>
+  <li><strong>Топология графа:</strong> Граф строится по схеме «потоки = узлы, рёбра между последовательными потоками одного хоста-источника». Чувствительность к схеме построения отмечена в Task 1 как потенциальный риск.</li>
+  <li><strong>Итеративная разработка:</strong> На Неделях 5&ndash;6 модели скелета используют parameter-free propagation + линейный классификатор. Обученные PyTorch Geometric GCN/GraphSAGE и INT8 QAT внедряются на Неделе 7.</li>
+  <li><strong>Тестовые данные:</strong> Файл <code>data/sample/flows_sample.csv</code> (10 строк) служит исключительно smoke-тестом пайплайна.</li>
+  <li><strong>Согласованность с Task 1:</strong> Упоминание энергопотребления из предварительного Bridge Statement Task 1 <strong>полностью исключено</strong>, так как данная метрика отсутствует в RQ, гипотезах и матрице контролируемых переменных.</li>
+</ol>
+
+<h2>7. Конфигурация эксперимента (config.yaml)</h2>
+<hr>
+<pre><code>experiment:
+  name: sample_smoke_run
+  seed: 42
+
+data:
+  path: data/sample/flows_sample.csv
+  feature_cols: [duration, pkts, bytes, mean_iat]
+  label_col: label
+  attack_col: attack_type
+  benign_train_frac: 0.6
+
+graph:
+  hops: 2
+  window_size: 1000
+
+models:
+  - {name: flat_lr,      enabled: true}
+  - {name: gnn_fp32,     enabled: true}
+  - {name: gnn_int8,     enabled: true}
+  - {name: qgnn,         enabled: true}
+
+benchmark:
+  warmup_runs: 3
+  repeats: 30
+  timeout_sec: 600
+
+guardrails:
+  min_precision: 0.92
+  max_f1_drop_vs_fp32: 0.02
+
+output:
+  results_csv: results/results.csv
+  log_file: results/run.log</code></pre>
+
+</body>
+</html>

@@ -1,0 +1,52 @@
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+env.bak/
+venv.bak/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/*
+
+# Benchmark outputs and volatile logs
+results/*.csv
+results/*.log
+!results/.gitkeep
+
+# Heavy / Raw Datasets (BoT-IoT full dumps, PCAP files)
+data/raw/
+data/full/
+data/processed/
+*.pcap
+*.csv.gz
+*.tar.gz
+*.zip
+*.parquet
+
+# Model checkpoints and serialized weights
+models/checkpoints/
+*.pt
+*.pth
+*.onnx
+*.bin
+*.joblib
+*.pkl
+
+# IDE and OS metadata
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
