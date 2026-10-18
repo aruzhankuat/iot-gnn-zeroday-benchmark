@@ -111,7 +111,7 @@ Execution outputs are recorded in `results/`:
 
 ## 7. Citation & Methodology
 Detailed operationalization, variable matrix, and mathematical hypotheses are documented in:
-👉 [`docs/METHODOLOGY_PASSPORT.md`](docs/METHODOLOGY_PASSPORT_EN.md)
+👉 [`docs/METHODOLOGY_PASSPORT.md`](docs/METHODOLOGY_PASSPORT_EN.md) 
 
 If utilizing this benchmark harness, cite:
 ```bibtex
