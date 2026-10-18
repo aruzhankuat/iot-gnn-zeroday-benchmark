@@ -1,7 +1,8 @@
 """
 Main execution benchmark script for IoT GNN Zero-Day Detection.
-Implements warmup, repeated latency measurements, memory tracking,
-and metric calculation with guardrail validation against H1 & H2.
+Leave-one-attack-out loop over all attack families, with warmup, repeated latency
+measurements (graph propagation included for graph models), memory tracking,
+and guardrail validation against H1.
 """
 
 import argparse
@@ -10,253 +11,190 @@ import os
 import sys
 import time
 import tracemalloc
-import yaml
+
 import numpy as np
 import pandas as pd
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
+import yaml
+from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score
 
-from data_loader import load_dataset, split_leave_one_attack_out
+from data_loader import list_attack_families, load_dataset, split_leave_one_attack_out
 from graph_builder import build_host_adjacency, propagate_features
 from models import FlatLRModel, GNNFP32Model, GNNINT8Model, QGNNStubModel
 
+MODEL_CLASSES = {
+    "flat_lr": FlatLRModel,
+    "gnn_fp32": GNNFP32Model,
+    "gnn_int8": GNNINT8Model,
+    "qgnn": QGNNStubModel,
+}
+COLUMNS = [
+    "model", "status", "held_out_attack", "median_latency_ms", "p95_latency_ms",
+    "latency_per_flow_ms", "peak_memory_mb", "model_size_mb", "accuracy", "precision",
+    "recall", "f1", "fpr", "unseen_recall_dr", "guardrail_status",
+]
+
 
 def setup_logger(log_file: str) -> logging.Logger:
-    """Configure benchmark file and stream logging."""
-    os.makedirs(os.path.dirname(log_file), exist_ok=True)
+    d = os.path.dirname(log_file)
+    if d:
+        os.makedirs(d, exist_ok=True)
     logger = logging.getLogger("iot_gnn_benchmark")
     logger.setLevel(logging.INFO)
     logger.handlers.clear()
-
-    formatter = logging.Formatter("[%(asctime)s] [%(levelname)s] %(message)s")
-
-    fh = logging.FileHandler(log_file, mode="w", encoding="utf-8")
-    fh.setLevel(logging.INFO)
-    fh.setFormatter(formatter)
-    logger.addHandler(fh)
-
-    ch = logging.StreamHandler(sys.stdout)
-    ch.setLevel(logging.INFO)
-    ch.setFormatter(formatter)
-    logger.addHandler(ch)
-
+    fmt = logging.Formatter("[%(asctime)s] [%(levelname)s] %(message)s")
+    for h in (logging.FileHandler(log_file, mode="w", encoding="utf-8"), logging.StreamHandler(sys.stdout)):
+        h.setFormatter(fmt)
+        logger.addHandler(h)
     return logger
 
 
-def measure_latency_and_memory(model, X_eval, warmup: int = 3, repeats: int = 30):
-    """Measure inference latency (median ms) and peak memory consumption (MB)."""
-    # Warmup runs
+def measure_latency_and_memory(infer, n_flows: int, warmup: int = 3, repeats: int = 30):
+    """
+    `infer` is the full inference callable (propagation + head for graph models).
+    Latency is timed WITHOUT tracemalloc (it adds overhead); memory is measured
+    in a separate single call.
+    """
     for _ in range(warmup):
-        _ = model.predict(X_eval)
+        infer()
 
-    # Latency repeats
     durations_ms = []
-    tracemalloc.start()
     for _ in range(repeats):
         t0 = time.perf_counter()
-        _ = model.predict(X_eval)
-        t1 = time.perf_counter()
-        durations_ms.append((t1 - t0) * 1000.0)
+        infer()
+        durations_ms.append((time.perf_counter() - t0) * 1000.0)
 
-    current_mem, peak_mem = tracemalloc.get_traced_memory()
+    tracemalloc.start()
+    infer()
+    _, peak = tracemalloc.get_traced_memory()
     tracemalloc.stop()
 
-    median_lat = float(np.median(durations_ms))
-    p95_lat = float(np.percentile(durations_ms, 95))
-    peak_mem_mb = float(peak_mem / (1024 * 1024))
-    per_flow_lat = median_lat / max(len(X_eval), 1)
-
+    median = float(np.median(durations_ms))
     return {
-        "median_latency_ms": round(median_lat, 4),
-        "p95_latency_ms": round(p95_lat, 4),
-        "latency_per_flow_ms": round(per_flow_lat, 6),
-        "peak_memory_mb": round(peak_mem_mb, 4),
+        "median_latency_ms": round(median, 4),
+        "p95_latency_ms": round(float(np.percentile(durations_ms, 95)), 4),
+        "latency_per_flow_ms": round(median / max(n_flows, 1), 6),
+        "peak_memory_mb": round(peak / (1024 * 1024), 4),
     }
 
 
 def evaluate_predictions(y_true, y_pred, test_attacks, held_out_attack: str):
-    """Calculate detection metrics, zero-day recall, and FPR."""
-    acc = accuracy_score(y_true, y_pred)
-    prec = precision_score(y_true, y_pred, zero_division=0)
-    rec = recall_score(y_true, y_pred, zero_division=0)
-    f1 = f1_score(y_true, y_pred, zero_division=0)
-
-    # False Positive Rate (FPR = FP / (FP + TN)) on benign test traffic
-    benign_mask = test_attacks == "benign"
-    if np.sum(benign_mask) > 0:
-        tn = np.sum((y_true[benign_mask] == 0) & (y_pred[benign_mask] == 0))
-        fp = np.sum((y_true[benign_mask] == 0) & (y_pred[benign_mask] == 1))
-        fpr = fp / (fp + tn) if (fp + tn) > 0 else 0.0
-    else:
-        fpr = 0.0
-
-    # Zero-Day Detection Rate (Recall strictly on held-out attack family)
-    unseen_mask = test_attacks == held_out_attack
-    if np.sum(unseen_mask) > 0:
-        unseen_rec = recall_score(y_true[unseen_mask], y_pred[unseen_mask], zero_division=0)
-        unseen_prec = precision_score(y_true[unseen_mask], y_pred[unseen_mask], zero_division=0)
-    else:
-        unseen_rec = rec
-        unseen_prec = prec
-
+    """Detection metrics over the whole test set (benign + unseen attack)."""
+    benign = test_attacks == "benign"
+    fp = int(np.sum((y_pred[benign] == 1)))
+    tn = int(np.sum((y_pred[benign] == 0)))
+    unseen = test_attacks == held_out_attack
     return {
-        "accuracy": round(float(acc), 4),
-        "precision": round(float(prec), 4),
-        "recall": round(float(rec), 4),
-        "f1": round(float(f1), 4),
-        "fpr": round(float(fpr), 4),
-        "unseen_recall_dr": round(float(unseen_rec), 4),
-        "unseen_precision": round(float(unseen_prec), 4),
+        "accuracy": round(float(accuracy_score(y_true, y_pred)), 4),
+        "precision": round(float(precision_score(y_true, y_pred, zero_division=0)), 4),
+        "recall": round(float(recall_score(y_true, y_pred, zero_division=0)), 4),
+        "f1": round(float(f1_score(y_true, y_pred, zero_division=0)), 4),
+        "fpr": round(fp / (fp + tn), 4) if (fp + tn) > 0 else 0.0,
+        # zero-day detection rate: share of unseen-attack flows that were flagged
+        "unseen_recall_dr": round(float(np.mean(y_pred[unseen] == 1)), 4) if unseen.any() else float("nan"),
     }
 
 
 def run_benchmark(config_path: str = "config.yaml"):
-    """Main benchmark runner function."""
     with open(config_path, "r", encoding="utf-8") as f:
         config = yaml.safe_load(f)
 
     logger = setup_logger(config["output"]["log_file"])
     logger.info("=== Starting IoT GNN Zero-Day Benchmark (Weeks 5-6 Skeleton) ===")
-    logger.info(f"Loaded configuration from: {config_path}")
-    logger.info(f"Experiment Name: {config['experiment']['name']}, Seed: {config['experiment']['seed']}")
+    seed = config["experiment"]["seed"]
+    np.random.seed(seed)
+    logger.info(f"Config: {config_path} | Experiment: {config['experiment']['name']} | Seed: {seed}")
 
-    # 1. Load data
     df = load_dataset(config)
-    logger.info(f"Loaded dataset: {len(df)} total flows")
+    families = list_attack_families(df, config)
+    logger.info(f"Loaded {len(df)} flows; attack families (each held out in turn): {families}")
 
-    # 2. Split Leave-One-Attack-Out
-    splits = split_leave_one_attack_out(df, config)
-    held_out = splits["held_out_attack"]
-    logger.info(f"Zero-Day Held-out attack family: '{held_out}'")
-    logger.info(f"Train set: {len(splits['X_train'])} flows, Test set: {len(splits['X_test'])} flows")
-
-    # 3. Construct Graph & Propagate
     hops = config["graph"].get("hops", 2)
     win_size = config["graph"].get("window_size", 1000)
-    logger.info(f"Constructing host graph: hops={hops}, window_size={win_size}")
-
-    A_train = build_host_adjacency(splits["train_df"], window_size=win_size)
-    H_train = propagate_features(splits["X_train"], A_train, hops=hops)
-
-    A_test = build_host_adjacency(splits["test_df"], window_size=win_size)
-    H_test = propagate_features(splits["X_test"], A_test, hops=hops)
-
-    # 4. Model Registry
-    enabled_models = [m["name"] for m in config["models"] if m.get("enabled", True)]
     warmup = config["benchmark"].get("warmup_runs", 3)
     repeats = config["benchmark"].get("repeats", 30)
-    min_prec_threshold = config["guardrails"].get("min_precision", 0.92)
-    max_f1_drop_threshold = config["guardrails"].get("max_f1_drop_vs_fp32", 0.02)
+    min_prec = config["guardrails"].get("min_precision", 0.92)
+    max_f1_drop = config["guardrails"].get("max_f1_drop_vs_fp32", 0.02)
+    enabled = [m["name"] for m in config["models"] if m.get("enabled", True)]
 
     results = []
-    fp32_f1 = None
+    for held_out in families:
+        s = split_leave_one_attack_out(df, config, held_out)
+        n_tr, n_te = len(s["X_train"]), len(s["X_test"])
+        logger.info(f"--- Fold: held-out '{held_out}' | train={n_tr} test={n_te} "
+                    f"(held-out family absent from train: "
+                    f"{held_out not in set(s['train_df'][config['data']['attack_col']])}) ---")
 
-    for model_name in enabled_models:
-        logger.info(f"--- Running Benchmark for Model: [{model_name}] ---")
-        status = "ok"
+        blocks_tr = build_host_adjacency(s["train_df"], window_size=win_size)
+        blocks_te = build_host_adjacency(s["test_df"], window_size=win_size)
+        H_train = propagate_features(s["X_train"], blocks_tr, hops)
+        fp32_f1 = None
 
-        try:
-            if model_name == "flat_lr":
-                m = FlatLRModel(seed=config["experiment"]["seed"])
-                m.fit(splits["X_train"], splits["y_train"])
-                bench = measure_latency_and_memory(m, splits["X_test"], warmup, repeats)
-                preds = m.predict(splits["X_test"])
-            elif model_name == "gnn_fp32":
-                m = GNNFP32Model(seed=config["experiment"]["seed"])
-                m.fit(H_train, splits["y_train"])
-                bench = measure_latency_and_memory(m, H_test, warmup, repeats)
-                preds = m.predict(H_test)
-            elif model_name == "gnn_int8":
-                m = GNNINT8Model(seed=config["experiment"]["seed"])
-                m.fit(H_train, splits["y_train"])
-                bench = measure_latency_and_memory(m, H_test, warmup, repeats)
-                preds = m.predict(H_test)
-            elif model_name == "qgnn":
-                m = QGNNStubModel(seed=config["experiment"]["seed"])
-                m.fit(H_train, splits["y_train"])
-                bench = measure_latency_and_memory(m, H_test, warmup, repeats)
-                preds = m.predict(H_test)
-                status = "exploratory_stub"
-            else:
-                logger.warning(f"Unknown model architecture: {model_name}, skipping.")
-                continue
+        for name in enabled:
+            row = {c: None for c in COLUMNS}
+            row.update(model=name, held_out_attack=held_out, status="ok", guardrail_status="n/a")
+            try:
+                if name not in MODEL_CLASSES:
+                    raise KeyError(f"unknown model '{name}'")
+                m = MODEL_CLASSES[name](seed=seed)
+                if len(set(s["y_train"])) < 2:
+                    raise ValueError("train split contains a single class")
 
-            metrics = evaluate_predictions(
-                splits["y_test"], preds, splits["test_attacks"], held_out
-            )
+                if name == "flat_lr":
+                    m.fit(s["X_train"], s["y_train"])
+                    infer = lambda: m.predict(s["X_test"])
+                else:
+                    m.fit(H_train, s["y_train"])
+                    infer = lambda: m.predict(propagate_features(s["X_test"], blocks_te, hops))
 
-            # Record FP32 baseline F1 for H1 guardrail comparison
-            if model_name == "gnn_fp32":
-                fp32_f1 = metrics["f1"]
+                bench = measure_latency_and_memory(infer, n_te, warmup, repeats)
+                metrics = evaluate_predictions(s["y_test"], infer(), s["test_attacks"], held_out)
+                row.update(bench)
+                row.update(metrics)
+                row["model_size_mb"] = round(m.size_mb(), 8)
 
-            # Guardrail evaluation
-            guardrail_passed = True
-            guardrail_note = "pass"
-
-            if model_name == "gnn_int8" and fp32_f1 is not None:
-                f1_drop = fp32_f1 - metrics["f1"]
-                if metrics["unseen_precision"] < min_prec_threshold:
-                    guardrail_passed = False
-                    guardrail_note = f"FAIL: precision {metrics['unseen_precision']} < {min_prec_threshold}"
-                elif f1_drop > max_f1_drop_threshold:
-                    guardrail_passed = False
-                    guardrail_note = f"FAIL: F1 drop {round(f1_drop, 4)} > {max_f1_drop_threshold}"
-
-            row = {
-                "model": model_name,
-                "status": status,
-                "held_out_attack": held_out,
-                "median_latency_ms": bench["median_latency_ms"],
-                "latency_per_flow_ms": bench["latency_per_flow_ms"],
-                "peak_memory_mb": bench["peak_memory_mb"],
-                "accuracy": metrics["accuracy"],
-                "precision": metrics["precision"],
-                "recall": metrics["recall"],
-                "f1": metrics["f1"],
-                "fpr": metrics["fpr"],
-                "unseen_recall_dr": metrics["unseen_recall_dr"],
-                "unseen_precision": metrics["unseen_precision"],
-                "guardrail_status": guardrail_note,
-            }
+                if name == "gnn_fp32":
+                    fp32_f1 = metrics["f1"]
+                if name == "gnn_int8" and fp32_f1 is not None:
+                    drop = fp32_f1 - metrics["f1"]
+                    if metrics["precision"] < min_prec:
+                        row["guardrail_status"] = f"FAIL: precision {metrics['precision']} < {min_prec}"
+                    elif drop > max_f1_drop:
+                        row["guardrail_status"] = f"FAIL: F1 drop {round(drop, 4)} > {max_f1_drop}"
+                    else:
+                        row["guardrail_status"] = "pass"
+                logger.info(f"[{name}] lat={row['median_latency_ms']} ms | mem={row['peak_memory_mb']} MB | "
+                            f"F1={row['f1']} | FPR={row['fpr']} | DR={row['unseen_recall_dr']} | "
+                            f"guardrail={row['guardrail_status']}")
+            except NotImplementedError as e:
+                row["status"] = f"skipped: {e}"
+                logger.info(f"[{name}] skipped: {e}")
+            except Exception as e:
+                row["status"] = f"error: {e}"
+                row["guardrail_status"] = "error"
+                logger.error(f"[{name}] failed: {e}", exc_info=True)
             results.append(row)
-            logger.info(
-                f"[{model_name}] Latency: {bench['median_latency_ms']} ms | Memory: {bench['peak_memory_mb']} MB | "
-                f"F1: {metrics['f1']} | Unseen DR: {metrics['unseen_recall_dr']} | Guardrail: {guardrail_note}"
-            )
 
-        except Exception as e:
-            logger.error(f"Error executing benchmark on {model_name}: {str(e)}", exc_info=True)
-            results.append({
-                "model": model_name,
-                "status": f"error: {str(e)}",
-                "held_out_attack": held_out,
-                "median_latency_ms": None,
-                "latency_per_flow_ms": None,
-                "peak_memory_mb": None,
-                "accuracy": None,
-                "precision": None,
-                "recall": None,
-                "f1": None,
-                "fpr": None,
-                "unseen_recall_dr": None,
-                "unseen_precision": None,
-                "guardrail_status": "error",
-            })
-
-    # 5. Export results
-    results_df = pd.DataFrame(results)
     out_csv = config["output"]["results_csv"]
-    os.makedirs(os.path.dirname(out_csv), exist_ok=True)
-    results_df.to_csv(out_csv, index=False)
-    logger.info(f"Benchmark results successfully written to: {out_csv}")
+    d = os.path.dirname(out_csv)
+    if d:
+        os.makedirs(d, exist_ok=True)
+    res = pd.DataFrame(results, columns=COLUMNS)
+    res.to_csv(out_csv, index=False)
+    logger.info(f"Results written to: {out_csv}")
 
-    # Print summary table
-    logger.info("\n=== BENCHMARK SUMMARY TABLE ===")
-    print(results_df[["model", "status", "median_latency_ms", "peak_memory_mb", "f1", "unseen_recall_dr", "guardrail_status"]].to_string(index=False))
-    logger.info("=== Execution Completed Successfully ===")
+    ok = res[res["status"] == "ok"]
+    if not ok.empty:
+        agg = ok.groupby("model")[["median_latency_ms", "model_size_mb", "f1", "fpr", "unseen_recall_dr"]].mean()
+        if "gnn_fp32" in agg.index:
+            base = agg.loc["gnn_fp32"]
+            agg["latency_vs_fp32_%"] = (agg["median_latency_ms"] / base["median_latency_ms"] - 1) * 100
+            agg["size_vs_fp32_%"] = (agg["model_size_mb"] / base["model_size_mb"] - 1) * 100
+        logger.info("=== SUMMARY (mean over folds) ===")
+        print(agg.to_string(float_format=lambda v: f"{v:.6g}"))
+    logger.info("=== Execution Completed ===")
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="IoT GNN Zero-Day Benchmark Runner")
-    parser.add_argument("--config", type=str, default="config.yaml", help="Path to config.yaml")
-    args = parser.parse_args()
-    run_benchmark(config_path=args.config)
+    parser.add_argument("--config", type=str, default="config.yaml")
+    run_benchmark(config_path=parser.parse_args().config)
