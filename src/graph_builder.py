@@ -1,55 +1,56 @@
-"""Graph construction and parameter-free topological message passing (Weeks 5-6)."""
+"""Graph construction and parameter-free topological message passing."""
 
 import numpy as np
 import pandas as pd
 
 
-def build_host_adjacency(df: pd.DataFrame, window_size: int = 1000) -> np.ndarray:
-    """
-    Construct flow graph adjacency matrix:
-    - Nodes = network flows
-    - Edges = consecutive flows originating from or targeting the same host IP
-    - Graph window bounded by window_size to control O(n^2) complexity
-    """
-    n = min(len(df), window_size)
-    A = np.eye(n, dtype=np.float32)  # Self-loops included
-
+def _host_columns(df: pd.DataFrame) -> list:
+    if "src_ip" in df.columns and "dst_ip" in df.columns:
+        return ["src_ip", "dst_ip"]
     if "host_ip" in df.columns:
-        hosts = df["host_ip"].iloc[:n].values
-        for i in range(n - 1):
-            if hosts[i] == hosts[i + 1]:
-                A[i, i + 1] = 1.0
-                A[i + 1, i] = 1.0
-    else:
-        # Fallback consecutive temporal linkage
-        for i in range(n - 1):
-            A[i, i + 1] = 1.0
-            A[i + 1, i] = 1.0
-
-    return A
+        return ["host_ip"]
+    return []
 
 
-def propagate_features(X: np.ndarray, A: np.ndarray, hops: int = 2) -> np.ndarray:
+def build_host_adjacency(df: pd.DataFrame, window_size: int = 1000) -> list:
     """
-    Perform symmetric normalized graph propagation:
-    A_hat = D^(-1/2) * A * D^(-1/2)
-    X_prop = (A_hat ^ hops) * X
+    Build flow graphs window by window (bounds the O(n^2) adjacency memory).
+    - Nodes = flows (df must be in chronological order)
+    - Edges = consecutive flows sharing a host IP (src_ip / dst_ip, or host_ip)
+    - Fallback if no host columns: link consecutive flows in time
+    Returns a list of (start, end, A_norm) blocks, A_norm = D^-1/2 (A+I) D^-1/2.
     """
-    n = min(len(X), len(A))
-    X_sub = X[:n]
-    A_sub = A[:n, :n]
+    cols = _host_columns(df)
+    blocks = []
+    for start in range(0, len(df), window_size):
+        end = min(start + window_size, len(df))
+        window = df.iloc[start:end]
+        n = end - start
+        A = np.eye(n, dtype=np.float32)  # self-loops
 
-    # Degree matrix normalization
-    degrees = np.sum(A_sub, axis=1)
-    d_inv_sqrt = np.power(degrees, -0.5, where=degrees > 0)
-    d_inv_sqrt[degrees == 0] = 0.0
-    D_mat = np.diag(d_inv_sqrt)
+        if cols:
+            for col in cols:
+                last_seen = {}
+                for i, host in enumerate(window[col].to_numpy()):
+                    j = last_seen.get(host)
+                    if j is not None:
+                        A[i, j] = A[j, i] = 1.0
+                    last_seen[host] = i
+        else:
+            for i in range(n - 1):
+                A[i, i + 1] = A[i + 1, i] = 1.0
 
-    A_norm = D_mat @ A_sub @ D_mat
+        d_inv_sqrt = 1.0 / np.sqrt(A.sum(axis=1))
+        blocks.append((start, end, A * d_inv_sqrt[:, None] * d_inv_sqrt[None, :]))
+    return blocks
 
-    # Multi-hop propagation
-    H = X_sub.copy()
+
+def propagate_features(X: np.ndarray, blocks: list, hops: int = 2) -> np.ndarray:
+    """X_prop = (A_norm ^ hops) X, applied independently inside each window."""
+    H = X.astype(np.float32, copy=True)
     for _ in range(hops):
-        H = A_norm @ H
-
+        out = np.empty_like(H)
+        for start, end, A_norm in blocks:
+            out[start:end] = A_norm @ H[start:end]
+        H = out
     return H
