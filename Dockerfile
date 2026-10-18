@@ -7,7 +7,9 @@ WORKDIR /app
 
 # Prevent python from buffering stdout/stderr and creating bytecode
 ENV PYTHONUNBUFFERED=1 \
-    PYTHONDONTWRITEBYTECODE=1
+    PYTHONDONTWRITEBYTECODE=1 \
+    OMP_NUM_THREADS=1 \
+    OPENBLAS_NUM_THREADS=1
 
 # Install dependencies strictly with pinned versions
 COPY requirements.txt .
