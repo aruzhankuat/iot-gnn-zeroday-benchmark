@@ -11,7 +11,7 @@ An empirical benchmarking framework evaluating classical, quantized (`INT8`), an
 ---
 
 ## Authors & Affiliation
-* **Kutmyrza Aziza** — [GitHub](https://github.com/<AZIZA_GITHUB_USERNAME>)
+* **Kutmyrza Aziza** — [GitHub](https://github.com/aziza-ops)
 * **Kuat Aruzhan** — [GitHub](https://github.com/aruzhankuat)
 
 ---
