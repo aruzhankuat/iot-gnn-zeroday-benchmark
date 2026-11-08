@@ -219,3 +219,4 @@ Distributed under the [MIT License](LICENSE).
 1. Re-run the benchmark inside Docker (--cpus=1 --memory=512m).
 2. Replace the synthetic flows with the BoT-IoT subset.
 3. Quantize the propagation step, not only the final layer.
+4. Measure peak memory and compare Macro-F1 with the flat model (H2).
