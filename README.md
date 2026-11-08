@@ -217,3 +217,4 @@ Distributed under the [MIT License](LICENSE).
 ## 13. Next Steps
 
 1. Re-run the benchmark inside Docker (--cpus=1 --memory=512m).
+2. Replace the synthetic flows with the BoT-IoT subset.
