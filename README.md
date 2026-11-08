@@ -209,7 +209,7 @@ Distributed under the [MIT License](LICENSE).
 
 ## 12. Team Contributions
 
-* *Kutmyrza Aziza:* benchmark data collection script, statistical analysis, figures, Task 3 report.
+* *Kutmyrza Aziza:* benchmark data collection script, statistical analysis, figures, Task 3 report
 * *Kuat Aruzhan:* review of results and domain model, discussion of findings, next steps.
 
 ---
