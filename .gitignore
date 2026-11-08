@@ -24,10 +24,13 @@ results/*.csv
 results/*.log
 !results/.gitkeep
 
-# Heavy / Raw Datasets (BoT-IoT full dumps, PCAP files)
-data/raw/
+# Heavy / Raw Datasets (BoT-IoT full dumps, PCAP files).
+# Only the small benchmark log data/raw/test_run.jsonl and the aggregated
+# data/processed/metrics_summary.csv are committed (Task 3).
+data/raw/*
+!data/raw/test_run.jsonl
+!data/raw/.gitkeep
 data/full/
-data/processed/
 *.pcap
 *.csv.gz
 *.tar.gz
@@ -50,3 +53,7 @@ models/checkpoints/
 Thumbs.db
 *.swp
 *.swo
+
+# Notebook / editor runtime artifacts
+.ipynb_checkpoints/
+*.nbconvert.ipynb
