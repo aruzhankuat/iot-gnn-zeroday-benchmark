@@ -211,3 +211,9 @@ Distributed under the [MIT License](LICENSE).
 
 * *Kutmyrza Aziza:* benchmark data collection script, statistical analysis, figures, Task 3 report.
 * *Kuat Aruzhan:* review of results and domain model, discussion of findings, next steps.
+
+---
+
+## 13. Next Steps
+
+1. Re-run the benchmark inside Docker (--cpus=1 --memory=512m).
