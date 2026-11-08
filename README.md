@@ -11,7 +11,7 @@ An empirical benchmarking framework evaluating classical, quantized (`INT8`), an
 ---
 
 ## Authors & Affiliation
-* **Kutmyrza Aziza** — [GitHub](https://github.com/<AZIZA_GITHUB_USERNAME>)
+* **Kutmyrza Aziza** — [GitHub](https://github.com/aziza-ops)
 * **Kuat Aruzhan** — [GitHub](https://github.com/aruzhankuat)
 
 ---
@@ -138,7 +138,7 @@ Seeds are fixed (`42`) for data generation and for all bootstrap resampling (500
 ---
 
 ## 8. Domain Model
-ML track: formal definition of the loss function, target metrics, notation table and a diagram of the metric collection points are in 👉 [`docs/domain_model.md`](docs/domain_model.md).
+ML track: formal definition of the loss function, target metrics, notation table and a diagram of the metric collection points are in [`docs/domain_model.md`](docs/domain_model.md).
 
 ---
 
@@ -187,7 +187,7 @@ ML track: formal definition of the loss function, target metrics, notation table
 
 ## 10. Citation & Methodology
 Detailed operationalization, variable matrix, and hypotheses are documented in:
-👉 [`docs/METHODOLOGY_PASSPORT_EN.md`](docs/METHODOLOGY_PASSPORT_EN.md)
+ [`docs/METHODOLOGY_PASSPORT_EN.md`](docs/METHODOLOGY_PASSPORT_EN.md)
 
 If utilizing this benchmark harness, cite:
 ```bibtex
