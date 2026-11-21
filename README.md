@@ -9,8 +9,17 @@ An empirical benchmarking framework evaluating classical, quantized (`INT8`), an
 ---
 
 ## Authors & Affiliation
-* **Kutmyrza Aziza** — [GitHub](https://github.com/aruzhankuat)
-* **Kuat Aruzhan** — [GitHub](https://github.com/aruzhankuat)
+* **Kutmyrza Aziza** — Department of Mathematical Statistics, Narxoz University, Almaty, Kazakhstan
+* **Kuat Aruzhan** — Department of Cybersecurity, Narxoz University, Almaty, Kazakhstan
+* **Repository:** [aruzhankuat/iot-gnn-zeroday-benchmark](https://github.com/aruzhankuat/iot-gnn-zeroday-benchmark)
+
+---
+
+## Task 4: IEEE Research Paper Draft
+The complete 4-page publication-ready draft is located in [`paper/`](paper/):
+* **LaTeX Source:** [`paper/main.tex`](paper/main.tex)
+* **Compiled PDF:** [`paper/Kutmyrza_Kuat_Task4_IEEE_Paper.pdf`](paper/Kutmyrza_Kuat_Task4_IEEE_Paper.pdf)
+* **Format:** IEEE 2-column conference format (`IEEEtran`), 15 peer-reviewed citations, verified IMRaD structure.
 
 ---
 
