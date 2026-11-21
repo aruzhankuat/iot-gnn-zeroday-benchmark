@@ -8,7 +8,7 @@
 \usepackage{graphicx}
 \usepackage{booktabs}
 \usepackage{url}
-\usepackage{hyperref}
+\usepackage[hidelinks]{hyperref}
 \usepackage{tikz}
 \usetikzlibrary{positioning,arrows.meta,fit,calc,shapes.geometric}
 \usepackage{algorithm}
@@ -165,9 +165,8 @@ of size $W$ (sorted by timestamp).  The resulting adjacency matrix is:
 \begin{equation}\label{eq:adj}
   A_{ij} =
   \begin{cases}
-    1, & \text{if } \mathrm{src}_i = \mathrm{src}_j \;\lor\;
-         \mathrm{dst}_i = \mathrm{dst}_j \;\lor\;
-         \mathrm{src}_i = \mathrm{dst}_j, \\
+    1, & \text{if } \mathrm{src}_i = \mathrm{src}_j \;\lor\; \mathrm{dst}_i = \mathrm{dst}_j \\
+       & \quad \lor\; \mathrm{src}_i = \mathrm{dst}_j, \\
     0, & \text{otherwise},
   \end{cases}
 \end{equation}
@@ -199,9 +198,8 @@ for both H1 (latency/size) and H2 (topology benefit).
 with symmetric post-training quantization of weights and activations:
 \begin{equation}\label{eq:quant}
   Q(w) = \mathrm{clip}\!\left(\left\lfloor w / s \right\rceil,\; -128,\; 127\right),
-  \quad s = \frac{\max|w|}{127},
 \end{equation}
-where $\lfloor \cdot \rceil$ denotes rounding.  Inference is performed via
+where $s = \max|w| / 127$ is the symmetric scale factor, and $\lfloor \cdot \rceil$ denotes rounding to nearest integer.  Inference is performed via
 INT32-accumulated integer matrix multiplication to prevent overflow, followed
 by de-quantization.  This is the edge compression target for H1.
 
@@ -215,12 +213,11 @@ performed; this model records NaN metrics to avoid polluting results.
 \centering
 \resizebox{\columnwidth}{!}{%
 \begin{tikzpicture}[
-  node distance=0.6cm and 0.5cm,
-  box/.style={draw, rounded corners=3pt, minimum height=0.75cm,
-              minimum width=2.0cm, font=\scriptsize, align=center,
+  node distance=0.55cm and 0.4cm,
+  box/.style={draw, rounded corners=3pt, minimum height=0.72cm,
+              minimum width=2.1cm, font=\scriptsize, align=center,
               thick},
   arr/.style={-{Stealth[length=2mm]}, thick},
-  lbl/.style={font=\tiny, midway, above},
 ]
   % Data flow
   \node[box, fill=blue!8]   (csv) {BoT-IoT\\Flows};
@@ -229,26 +226,26 @@ performed; this model records NaN metrics to avoid polluting results.
   \node[box, fill=red!8,    right=of graph](prop)  {$K$-hop\\Propagation};
 
   % Models branch
-  \node[box, fill=yellow!10, below left=0.9cm and -0.3cm of prop]  (fp32) {GNN-FP32\\Head};
-  \node[box, fill=yellow!10, below=0.4cm of fp32]                  (int8) {GNN-INT8\\Head};
-  \node[box, fill=gray!10,   below=0.4cm of int8]                  (qgnn) {QGNN\\(stub)};
-  \node[box, fill=cyan!8,    below right=0.9cm and -0.3cm of prop] (flat) {Flat-LR\\(no graph)};
+  \node[box, fill=yellow!10, below left=0.85cm and -0.25cm of prop] (fp32) {GNN-FP32\\Head};
+  \node[box, fill=yellow!10, below=0.35cm of fp32]                  (int8) {GNN-INT8\\Head};
+  \node[box, fill=gray!10,   below=0.35cm of int8]                  (qgnn) {QGNN\\(stub)};
+  \node[box, fill=cyan!8,    below right=0.85cm and -0.25cm of prop](flat) {Flat-LR\\(no graph)};
 
   % Output
-  \node[box, fill=purple!8,  below=2.6cm of prop]                  (eval) {Metrics \&\\Guardrails};
+  \node[box, fill=purple!8,  below=2.45cm of prop]                  (eval) {Metrics \&\\Guardrails};
 
   % Arrows
   \draw[arr] (csv)   -- (split);
   \draw[arr] (split) -- (graph);
   \draw[arr] (graph) -- (prop);
-  \draw[arr] (prop.south)  -- ++(0,-0.3) -| (fp32.north);
+  \draw[arr] (prop.south)  -- ++(0,-0.25) -| (fp32.north);
   \draw[arr] (fp32)  -- (int8);
   \draw[arr] (int8)  -- (qgnn);
-  \draw[arr] (split.south) -- ++(0,-0.5) -| (flat.north);
-  \draw[arr] (fp32.south)  -- ++(0,-0.1) -| (eval.north west);
-  \draw[arr] (int8.east)   -| (eval.west);
-  \draw[arr] (qgnn.south)  -- ++(0,-0.1) -| (eval.south west);
-  \draw[arr] (flat.south)  -- ++(0,-0.1) -| (eval.north east);
+  \draw[arr] (split.south) -- ++(0,-0.45) -| (flat.north);
+  \draw[arr] (fp32.east)   -| ([xshift=-6mm]eval.north);
+  \draw[arr] (int8.east)   -| ([xshift=-2mm]eval.north);
+  \draw[arr] (qgnn.east)   -| (eval.west);
+  \draw[arr] (flat.south)  -- ++(0,-0.2) -| (eval.north east);
 \end{tikzpicture}%
 }
 \caption{System architecture of the benchmarking framework.  Network flows
@@ -370,7 +367,7 @@ Latency = median over 30 repeats.  Heap = peak Python allocation
 Flat-LR         & 0.08 & 0.012 & 0.0001 \\
 GNN-FP32        & 0.52 & 0.024 & 0.0002 \\
 GNN-INT8        & \textbf{0.32} & \textbf{0.018} & \textbf{0.00005} \\
-QGNN (stub)     & \multicolumn{3}{c}{\textit{N/A}} \\
+QGNN (stub)     & \textit{N/A} & \textit{N/A} & \textit{N/A} \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -404,7 +401,7 @@ Param.\ size red.   & $\ge 40\%$     & Prelim.\ pass (75\%) \\
 Test precision       & $\ge 0.92$    & Prelim.\ pass (0.94) \\
 F1 drop (INT8)      & $\le 0.02$     & Prelim.\ pass (0.01) \\
 F1 gain (GNN)       & $\ge 0.15$     & Marginal (0.14) \\
-FPR constraint      & $\le$ Flat-LR  & Prelim.\ pass \\
+FPR constraint      & $\le \mathrm{FPR}_{\mathrm{flat}}$  & Prelim.\ pass \\
 Wilcoxon $p$        & $< 0.05$       & Pending ($K{<}6$) \\
 \bottomrule
 \end{tabular}
