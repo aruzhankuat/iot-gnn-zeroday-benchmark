@@ -6,8 +6,13 @@ FROM python:3.11.9-slim-bookworm
 WORKDIR /app
 
 # Prevent python from buffering stdout/stderr and creating bytecode
+# Control BLAS/OpenBLAS thread count to match Docker --cpus=1 constraint.
+# Without this, numpy may spawn extra threads, making latency measurements
+# non-reproducible and inconsistent with the stated hardware budget.
 ENV PYTHONUNBUFFERED=1 \
-    PYTHONDONTWRITEBYTECODE=1
+    PYTHONDONTWRITEBYTECODE=1 \
+    OMP_NUM_THREADS=1 \
+    OPENBLAS_NUM_THREADS=1
 
 # Install dependencies strictly with pinned versions
 COPY requirements.txt .

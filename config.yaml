@@ -1,11 +1,10 @@
-# All experiment parameters live here. Edit this file, not the code.
 experiment:
   name: sample_smoke_run
   seed: 42
 
 data:
   path: data/sample/flows_sample.csv        # Week 7: switch to full BoT-IoT subset (not committed)
-  feature_cols: [duration, pkts, bytes, mean_iat]
+  feature_cols: [duration, packet_count, byte_count, flow_rate]
   label_col: label
   attack_col: attack_type
   benign_train_frac: 0.6                    # chronological split of benign flows
